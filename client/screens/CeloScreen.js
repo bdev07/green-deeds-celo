@@ -30,9 +30,11 @@ const cUSD = "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1";
  * TEMPORARY.  IDEALLY this is a component to be used in other views.
  */
 export default class CeloScreen extends React.Component {
+  _isMounted = false
 
   // Set the defaults for the state
   state = {
+    loggedIn: false,
     address: 'Not logged in',
     phoneNumber: 'Not logged in',
     cUSDBalance: 'Not logged in',
@@ -63,12 +65,17 @@ export default class CeloScreen extends React.Component {
   }
   
   componentDidMount = async () => {
+    this._isMounted = true
     const faucetContractInstance = await this.initContract(FaucetContract);
 
     // Save the contract instance
     this.setState({ 
       faucetContract: faucetContractInstance
     })
+  }
+
+  componentWillUnmount = () => {
+    this._isMounted = false
   }
 
   
@@ -82,12 +89,13 @@ export default class CeloScreen extends React.Component {
     let faucetcGLDBalance = await goldToken.balanceOf(faucetAddress);
     let faucetcUSDBalance = await stableToken.balanceOf(faucetAddress);
 
-
-
-    this.setState({
+    if (this._isMounted === true) {
+      this.setState({
       faucetcGLDBalance: faucetcGLDBalance.toString(),
       faucetcUSDBalance: faucetcUSDBalance.toString()
     })
+    }
+
   }
 
   // end user sends funds to faucet
@@ -105,8 +113,6 @@ export default class CeloScreen extends React.Component {
 
     let celotx = await goldToken.transfer(faucetAddress, amount).send({from: donatingAccount}).catch(err => console.log("celotx ERR: ", err))
     let cUSDtx = await stableToken.transfer(faucetAddress, amount).send({from: donatingAccount, feeCurrency: stableToken.address}).catch(err => console.log("cUSDtx ERR: ", err))
-
-    console.log("got txs")
 
     // TODO: Error unknown account
     let celoReceipt = await celotx.waitReceipt().catch(err => console.log("celoReceipt ERR: ", err))
@@ -134,8 +140,6 @@ export default class CeloScreen extends React.Component {
     let amount = parseFloat(this.state.redeemAmount)
     let weiAmount = BigNumber(amount*10e17)
 
-
-    // // Create a transaction object to update the contract with the 'textInput'
     const txObject = await this.state.faucetContract.methods.withdraw(weiAmount, cUSD)
 
     // Send a request to the Celo wallet to send an update transaction to the Faucet contract
@@ -145,8 +149,7 @@ export default class CeloScreen extends React.Component {
         {
           from: this.state.address,
           to: this.state.faucetContract.options.address,
-          tx: txObject,
-          feeCurrency: FeeCurrency.cUSD
+          tx: txObject
         }
       ],
       { requestId, dappName, callback }
@@ -175,7 +178,6 @@ export default class CeloScreen extends React.Component {
     let amount = parseFloat(this.state.redeemAmount)
     let weiAmount = BigNumber(amount*10e17)
 
-    // // Create a transaction object to update the contract with the 'textInput'
     const txObject = await this.state.faucetContract.methods.withdraw(weiAmount, Celo)
 
     // Send a request to the Celo wallet to send an update transaction to the Faucet contract
@@ -185,8 +187,7 @@ export default class CeloScreen extends React.Component {
         {
           from: this.state.address,
           to: this.state.faucetContract.options.address,
-          tx: txObject,
-          feeCurrency: FeeCurrency.cUSD
+          tx: txObject
         }
       ],
       { requestId, dappName, callback }
@@ -255,7 +256,8 @@ export default class CeloScreen extends React.Component {
     this.setState({ cUSDBalance, 
                     isLoadingBalance: false,
                     address: dappkitResponse.address, 
-                    phoneNumber: dappkitResponse.phoneNumber })
+                    phoneNumber: dappkitResponse.phoneNumber,
+                  loggedIn: true })
   }
 
   getUserBalance = async () => {
@@ -269,7 +271,10 @@ export default class CeloScreen extends React.Component {
     // Convert from a big number to a string
     let cUSDBalance = cUSDBalanceBig.toString()
     
-    this.setState({ cUSDBalance })
+    if (this._isMounted === true) {
+      this.setState({ cUSDBalance })
+    }
+
   }
 
   onChangeText = async (text) => {
@@ -285,43 +290,54 @@ export default class CeloScreen extends React.Component {
       <View style={styles.container}>
         <Image resizeMode='contain' source={whiteWalletRings}></Image>
         <Text>You must have Celo Wallet (alfajores network) installed!</Text>
-        
-        <Text style={styles.title}>Login first</Text>
-        <Button title="login()" 
-          onPress={()=> this.login()} />
-                <Text style={styles.title}>Account Info:</Text>
-        <Text>Current Account Address:</Text>
-        <Text>{this.state.address}</Text>
-        <Text>Phone number: {this.state.phoneNumber}</Text>
-        <Text>cUSD Balance: {this.state.cUSDBalance}</Text>
+        {
+          this.state.loggedIn === false ? (
+            <>
+              <Text style={styles.title}>Login first</Text>
+              <Button title="login()" 
+                onPress={()=> this.login()} />
+              <OpenURLButton url="https://celo.org/developers/wallet">
+                Download Wallet
+              </OpenURLButton>
+            </>
+          ) : (
+            <>
+              <Text style={styles.title}>Account Info:</Text>
+              <Text>Current Account Address:</Text>
+              <Text>{this.state.address}</Text>
+              <Text>Phone number: {this.state.phoneNumber}</Text>
+              <Text>cUSD Balance: {this.state.cUSDBalance}</Text>
 
-        <Text style={styles.title}>Faucet Balance:</Text>
-        <Button title="Get Faucet Info" 
-          onPress={()=> this.getFaucetInfo()} />
-        <Text>cGLD Balance: {this.state.faucetcGLDBalance}</Text>
-        <Text>cUSD Balance: {this.state.faucetcUSDBalance}</Text>
+              <Text style={styles.title}>Faucet Balance:</Text>
+              <Button title="Get Faucet Info" 
+                onPress={()=> this.getFaucetInfo()} />
+              <Text>cGLD Balance: {this.state.faucetcGLDBalance}</Text>
+              <Text>cUSD Balance: {this.state.faucetcUSDBalance}</Text>
 
-        <TextInput
-        style={styles.input}
-        onChangeText={this.onChangeNumber}
-        value={this.state.redeemAmount}
-        placeholder="Amount to Withdraw"
-        keyboardType="numeric"
-      />
+              <TextInput
+                style={styles.input}
+                onChangeText={this.onChangeNumber}
+                value={this.state.redeemAmount}
+                placeholder="Amount to Withdraw"
+                keyboardType="numeric"
+              />
 
-        <TextInput style={styles.title}>Withdraw from Faucet</TextInput>
-        <Button title="Get cGLD" 
-          onPress={()=> this.getcGLD()} />
-        <Button title="Get cUSD" 
-          onPress={()=> this.getcUSD()} />
+              <TextInput style={styles.title}>Withdraw {this.state.redeemAmount} from Faucet</TextInput>
+              <Button title="Get cGLD" 
+                onPress={()=> this.getcGLD()} />
+              <Button title="Get cUSD" 
+                onPress={()=> this.getcUSD()} />
 
-        <OpenURLButton url="https://app.ubeswap.org/#/swap">
-          Exchange cGLD for cUSD
-        </OpenURLButton>
+              <OpenURLButton url="https://app.ubeswap.org/#/swap">
+                Exchange cGLD for cUSD
+              </OpenURLButton>
 
-        <Text style={styles.title}>Donate to Faucet</Text>
-        <Button title="Donate to Faucet" 
-          onPress={()=> this.donateToFaucet()} />        
+              <Text style={styles.title}>Donate to Faucet</Text>
+              <Button title="Donate to Faucet" 
+                onPress={()=> this.donateToFaucet()} />     
+            </>
+          )
+        }
 
       </View>
     );
