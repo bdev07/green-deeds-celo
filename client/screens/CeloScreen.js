@@ -1,7 +1,7 @@
 import React from 'react'
 import '../global'
 import { web3, kit } from '../root'
-import { Image, StyleSheet, Text, TextInput, Button, View, YellowBox } from 'react-native'
+import { Image, StyleSheet, Text, TextInput, Button, View, YellowBox, ScrollView } from 'react-native'
 import {   
   requestTxSig,
   waitForSignedTxs,
@@ -287,6 +287,7 @@ export default class CeloScreen extends React.Component {
 
   render(){
     return (
+      
       <View style={styles.container}>
         <Image resizeMode='contain' source={whiteWalletRings}></Image>
         <Text>You must have Celo Wallet (alfajores network) installed!</Text>
@@ -301,7 +302,7 @@ export default class CeloScreen extends React.Component {
               </OpenURLButton>
             </>
           ) : (
-            <>
+            <ScrollView>
               <Text style={styles.title}>Account Info:</Text>
               <Text>Current Account Address:</Text>
               <Text>{this.state.address}</Text>
@@ -335,11 +336,12 @@ export default class CeloScreen extends React.Component {
               <Text style={styles.title}>Donate to Faucet</Text>
               <Button title="Donate to Faucet" 
                 onPress={()=> this.donateToFaucet()} />     
-            </>
+            </ScrollView>
           )
         }
 
       </View>
+      
     );
   }
 }
