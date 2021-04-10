@@ -2,14 +2,10 @@ dapp dev account : 0x6C90E3D5A4BE9D87b9ea9E23d40bA1C51a362b2c
 
 valores test wallet account : 0x03f3a7c0068e6060a03424c8f52bc8232cd71f34
 
-HelloWorld contract address : 0xcc077852F1C3e0bd898ac00c52c49f676FB529A0
 Owned by dapp dev account
-
 Faucet contract address : 0xb67586D3B12971D614CD1bd38F736522f676ae34
 
-
-after resetting migrations:
+after resetting migrations on 4/7/21:
 Network: alfajores (id: 44787)
   Faucet: 0xC1418A3Ca788Ae761c8C29F4F464E8535179b632
-  HelloWorld: 0x6DF5a202b3ED82d7e0501a5b714a77A1165C22D2
   Migrations: 0x09d4Fd319f5a7E2CF8e6FFbe279405E3A1630146
