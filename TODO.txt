@@ -1,3 +1,9 @@
 TO DO for Britt:
 1. Why are whole numbers causing problems?
 2. Make celo screen a component to be used in other screens.
+
+
+TO DO for all:
+1. Safe screen view only works for ios.  Need a wrapper to check platform on component/screen mount.
+2. Ensure readme instructions lead to expo demo without issue.
+3. Need user's recycling amount to consist throughout screens so Celo component can check before withdrawing from faucet.

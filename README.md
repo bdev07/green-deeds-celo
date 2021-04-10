@@ -28,6 +28,7 @@ To run the app from expo first install dependencies.
 yarn       # install depenedncies
 cd client  # move into the client directory
 yarn       # install front end dependencies
+expo start # run a demo in expo
 ```
 
 ## Mobile Dependencies
