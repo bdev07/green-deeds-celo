@@ -1,0 +1,3 @@
+TO DO for Britt:
+1. Why are whole numbers causing problems?
+2. Make celo screen a component to be used in other screens.
