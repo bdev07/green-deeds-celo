@@ -167,7 +167,7 @@ export default class CeloScreen extends React.Component {
     console.log(`Faucet contract update transaction receipt: `, result)  
     this.getFaucetInfo()
     this.getUserBalance()
-    this.setState({ redeemAmount: 0 })
+    this.setState({ redeemAmount: "0" })
   }
 
   getcGLD = async () => {
@@ -207,7 +207,7 @@ export default class CeloScreen extends React.Component {
     console.log(`Faucet contract update transaction receipt: `, result)  
     this.getFaucetInfo()
     this.getUserBalance()
-    this.setState({ redeemAmount: 0 })
+    this.setState({ redeemAmount: "0" })
   }
 
   //TODO: allow exchanges inside the app
@@ -321,6 +321,7 @@ export default class CeloScreen extends React.Component {
               <Text>cGLD Balance: {this.state.faucetcGLDBalance}</Text>
               <Text>cUSD Balance: {this.state.faucetcUSDBalance}</Text>
 
+              <TextInput style={styles.title}>Withdraw {this.state.redeemAmount} from Faucet</TextInput>
               <TextInput
                 style={styles.input}
                 onChangeText={this.onChangeNumber}
@@ -329,7 +330,6 @@ export default class CeloScreen extends React.Component {
                 keyboardType="numeric"
               />
 
-              <TextInput style={styles.title}>Withdraw {this.state.redeemAmount} from Faucet</TextInput>
               <Button title="Get cGLD" 
                 onPress={()=> this.getcGLD()} 
                 disabled={disabled}  
