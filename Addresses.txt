@@ -9,3 +9,8 @@ after resetting migrations on 4/7/21:
 Network: alfajores (id: 44787)
   Faucet: 0xC1418A3Ca788Ae761c8C29F4F464E8535179b632
   Migrations: 0x09d4Fd319f5a7E2CF8e6FFbe279405E3A1630146
+
+After creating a new repo 4/10/21:
+Network: alfajores (id: 44787)
+  Faucet: 0x80Fc368820B68aA68DBe7378aA925Feb553F30F2
+  Migrations: 0x743284f6491d838467B575ffd9da1510938ECeC6

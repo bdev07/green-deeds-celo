@@ -17,6 +17,7 @@ import OpenURLButton from '../components/OpenURLButton'
 import BigNumber from 'bignumber.js'
 
 import whiteWalletRings from '../assets/white-wallet-rings.png'
+import { useDispatch } from 'react-redux'
 
 YellowBox.ignoreWarnings(['Warning: The provided value \'moz', 'Warning: The provided value \'ms-stream'])
 
@@ -27,7 +28,7 @@ const cUSD = "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1";
 
 
 /**
- * TEMPORARY.  IDEALLY this is a component to be used in other views.
+ * TEMPORARY.  IDEALLY this is a component to be used in other screens.
  */
 export default class CeloScreen extends React.Component {
   _isMounted = false
@@ -149,7 +150,8 @@ export default class CeloScreen extends React.Component {
         {
           from: this.state.address,
           to: this.state.faucetContract.options.address,
-          tx: txObject
+          tx: txObject,
+          feeCurrency: FeeCurrency.cUSD
         }
       ],
       { requestId, dappName, callback }
@@ -165,6 +167,7 @@ export default class CeloScreen extends React.Component {
     console.log(`Faucet contract update transaction receipt: `, result)  
     this.getFaucetInfo()
     this.getUserBalance()
+    this.setState({ redeemAmount: 0 })
   }
 
   getcGLD = async () => {
@@ -187,11 +190,12 @@ export default class CeloScreen extends React.Component {
         {
           from: this.state.address,
           to: this.state.faucetContract.options.address,
-          tx: txObject
+          tx: txObject,
+          feeCurrency: FeeCurrency.cUSD
         }
       ],
       { requestId, dappName, callback }
-    ).catch(err => console.log("requestTXSig Err: ", err))
+    ).catch(err => console.log("requestTXSig Err: ", err ))
 
     // Get the response from the Celo wallet
     const dappkitResponse = await waitForSignedTxs(requestId)
@@ -203,6 +207,7 @@ export default class CeloScreen extends React.Component {
     console.log(`Faucet contract update transaction receipt: `, result)  
     this.getFaucetInfo()
     this.getUserBalance()
+    this.setState({ redeemAmount: 0 })
   }
 
   //TODO: allow exchanges inside the app
@@ -286,6 +291,7 @@ export default class CeloScreen extends React.Component {
   }
 
   render(){
+    let disabled = this.state.redeemAmount > 0 ? false : true
     return (
       
       <View style={styles.container}>
@@ -325,17 +331,20 @@ export default class CeloScreen extends React.Component {
 
               <TextInput style={styles.title}>Withdraw {this.state.redeemAmount} from Faucet</TextInput>
               <Button title="Get cGLD" 
-                onPress={()=> this.getcGLD()} />
+                onPress={()=> this.getcGLD()} 
+                disabled={disabled}  
+              />
               <Button title="Get cUSD" 
-                onPress={()=> this.getcUSD()} />
+                onPress={()=> this.getcUSD()} 
+                disabled={disabled} 
+              />
 
               <OpenURLButton url="https://app.ubeswap.org/#/swap">
                 Exchange cGLD for cUSD
               </OpenURLButton>
 
-              <Text style={styles.title}>Donate to Faucet</Text>
               <Button title="Donate to Faucet" 
-                onPress={()=> this.donateToFaucet()} />     
+                onPress={()=> this.donateToFaucet()} disabled />     
             </ScrollView>
           )
         }
