@@ -2,40 +2,45 @@
 
 Currently working on the [Alfajores test network](https://docs.celo.org/getting-started/alfajores-testnet).
 
-Most of this readme file is copied from: https://github.com/critesjosh/celo-dappkit
 
-## Requirements
+## Server Requirements
 
 - [Node.js](https://nodejs.org/en/)
+\>=14.16.0
 - [Yarn package manager](https://yarnpkg.com/)
-- [Truffle](https://www.trufflesuite.com/truffle)
+\>=1.22.4
 - [Expo](https://docs.expo.io/get-started/installation/)
+4.3.5
+- [Truffle](https://www.trufflesuite.com/truffle)
+(only needed for smart contract development)
+
+## Phone Requirements
+
+- [Expo Go](https://expo.io/client)
 - [Celo Wallet](https://celo.org/developers/wallet)
 
-## Initial boilerplate for Celo aspect of project
+You will need the Expo app installed on your development mobile device or emulator ([iOS](https://apps.apple.com/app/apple-store/id982107779) or [Android](https://play.google.com/store/apps/details?id=host.exp.exponent&referrer=www)). 
 
-```bash
-truffle unbox critesjosh/celo-dappkit
-``` 
+You will also need the [Celo Wallet](https://celo.org/developers/wallet) on your mobile device (or emulator) to sign transactions. 
 
-## Development
+## To Run a Demo
 
 The project smart contracts and configuration are in the root directory. The React Native front end is in the `/client` directory. 
 
-To run the app from expo first install dependencies.
+To run the app from expo, first install dependencies.
 
 ```bash
 yarn       # install depenedncies
 cd client  # move into the client directory
 yarn       # install front end dependencies
+```
+
+Then start expo.
+```bash
+cd client  # move into the client directory
 expo start # run a demo in expo
 ```
 
-## Mobile Dependencies
-
-You will need the Expo app installed on your development mobile device or emulator ([iOS](https://apps.apple.com/app/apple-store/id982107779) or [Android](https://play.google.com/store/apps/details?id=host.exp.exponent&referrer=www)). 
-
-You will also need the [Celo Wallet](https://celo.org/developers/wallet) on your mobile device (or emulator) to sign transactions. 
 
 ## Smart contract development
 
@@ -59,44 +64,21 @@ You can migrate contracts to the alfajores test network with
 truffle migrate --network alfajores
 ```
 
-## Developing the mobile application
 
-Keep in mind that you will need a version of the Celo Wallet installed on the mobile device with which you are developing the application. The Celo Wallet is the private key management software that the user will sign transactions with. 
+## Initial boilerplate for Celo aspect of project
 
-You can install the Celo wallet on your physical device with an invite code [here.](https://celo.org/developers/wallet) 
-
-You can build the latest version of the Celo Wallet and find instructions on running a development build [here.](https://github.com/celo-org/celo-monorepo/tree/master/packages/mobile) 
-
-Once you have a device with the Celo wallet installed, you can start working on your application. 
-
-
-### Application development with Expo
-
-In this project, the React Native application lives in the `client` directory. `cd` into the client directory and run `$ yarn` to install the dependencies. 
-
-[Expo](https://expo.io/) is a tool that makes developing React Native applications much easier. We will be using Expo for easy setup.
-
-Install it with:
-```
-yarn global add expo-cli
-# or
-npm install --global expo-cli
-```
-
-You can start the application from the client directory with
-```
-expo start
-```
-
-You can use your physical mobile device or an emulator to develop apps with Expo. If you want to use your physical device, you will have to [install the Expo app on your device.](https://expo.io/learn)
-
-Make sure the Celo Wallet app is open on your device when you are using your dapp. Your dapp will be requesting information from the Celo Wallet.
-
-### Using an emulator
-
-You can find more information about running and Android emulator [here.](https://developer.android.com/studio/run/emulator-commandline)
-
+```bash
+truffle unbox critesjosh/celo-dappkit
+``` 
 
 ## Sources:
 
 [Celo Docs](https://docs.celo.org/) 
+
+[Running an Android emulator](https://developer.android.com/studio/run/emulator-commandline)
+
+[Expo](https://expo.io/learn)
+
+[Celo Test Wallet](https://celo.org/developers/wallet) 
+
+[Base Project](https://github.com/critesjosh/celo-dappkit)
