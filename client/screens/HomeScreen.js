@@ -16,8 +16,9 @@ const HomeScreen = ({ navigation }) => {
       <View>
         <Button title="Compost" onPress={compost} />
         <Button title="Recycle" onPress={recycle} />
-        <Button title="Logout" onPress={logout} />
-        <Button title="Celo" onPress={celo} />
+        <Button title="Celo"    onPress={celo} />
+        <Button title="Logout"  onPress={logout} />
+        
       </View>
     </SafeAreaView>
   );

@@ -164,7 +164,7 @@ export default class CeloScreen extends React.Component {
     // Get the transaction result, once it has been included in the Celo blockchain
     let result = await toTxResult(kit.web3.eth.sendSignedTransaction(tx)).waitReceipt()
 
-    console.log(`Faucet contract update transaction receipt: `, result)  
+    console.log(`Faucet contract update transaction receipt: `, result.transactionHash)  
     this.getFaucetInfo()
     this.getUserBalance()
     this.setState({ redeemAmount: "0" })
@@ -204,7 +204,7 @@ export default class CeloScreen extends React.Component {
     // Get the transaction result, once it has been included in the Celo blockchain
     let result = await toTxResult(kit.web3.eth.sendSignedTransaction(tx)).waitReceipt()
 
-    console.log(`Faucet contract update transaction receipt: `, result)  
+    console.log(`Faucet contract update transaction receipt: `, result.transactionHash)  
     this.getFaucetInfo()
     this.getUserBalance()
     this.setState({ redeemAmount: "0" })
