@@ -1,6 +1,6 @@
 # Green Deeds Celo Hackathon Submission:
 
-Link to our full presentation: [Presentation] (tinyurl.com/238wjhvj_
+Link to our full presentation: [Presentation](tinyurl.com/238wjhvj)
 
 Link to our video demo(s): 
 - [Recycling and Ubeswap](https://youtu.be/ja_fWc7RCmk)
