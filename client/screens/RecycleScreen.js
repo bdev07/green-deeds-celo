@@ -19,10 +19,7 @@ export default class RecycleScreen extends React.Component {
 
   }
 
-
-
   render() {
-    console.log(this.props)
     return (
       <SafeAreaView>
         <Button title="Scan Receipt" onPress={this.photoPressed} />

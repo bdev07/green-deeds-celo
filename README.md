@@ -14,7 +14,7 @@ Green Deeds hopes to revolutionize how we think about food waste and plastics by
 
 We hope to minimize the need for raw materials by keeping existing assets in the production cycle.  
 
-Any business that uses recyclable materials like compost or empty bottles can donate to the Green Deeds funds.  Those funds then go to businesses or individuals who have done a greed deed by recycling or composting. 
+Investors or any business that uses recyclable materials like compost or empty bottles can donate to the Green Deeds funds.  Those funds then go to businesses or individuals who have done a greed deed by recycling or composting. 
 
 Our [demo]() shows a proof of concept for an end user wishing to recycle 3 bottles and redeem their rewards for celo dollars.  Those dollars can then be exchanged for celo gold using Ubeswap. 
 

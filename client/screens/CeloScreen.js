@@ -69,8 +69,7 @@ export default class CeloScreen extends React.Component {
     return instance;
   }
   
-  componentDidMount = async (props) => {
-    console.log("PROPPPPPS: ", this.props)
+  componentDidMount = async () => {
     this._isMounted = true
     const faucetContractInstance = await this.initContract(FaucetContract)
 
