@@ -1,7 +1,7 @@
 import React from 'react'
 import '../global'
 import { web3, kit } from '../root'
-import { Image, StyleSheet, Text, TextInput, Button, View, YellowBox, ScrollView } from 'react-native'
+import { Alert, Image, StyleSheet, Text, TextInput, Button, View, YellowBox, ScrollView } from 'react-native'
 import {   
   requestTxSig,
   waitForSignedTxs,
@@ -39,13 +39,17 @@ export default class CeloScreen extends React.Component {
     address: 'Not logged in',
     phoneNumber: 'Not logged in',
     cUSDBalance: 'Not logged in',
+    cGLDBalance: 'Not logged in',
     contractName: '',
     textInput: '',
     faucetContract: {},
+    faucetAddress: '',
     faucetcUSDBalance: 'N/A',
     faucetcGLDBalance: 'N/A',
     exchangeRate: '',
-    redeemAmount: '0',
+    redeemableAmount: this.props.route.params.redeemableAmount,
+    withdrawAmount: this.props.route.params.redeemableAmount,
+    isLoadingBalance: false
   }
 
   // initialize contracts
@@ -65,9 +69,10 @@ export default class CeloScreen extends React.Component {
     return instance;
   }
   
-  componentDidMount = async () => {
+  componentDidMount = async (props) => {
+    console.log("PROPPPPPS: ", this.props)
     this._isMounted = true
-    const faucetContractInstance = await this.initContract(FaucetContract);
+    const faucetContractInstance = await this.initContract(FaucetContract)
 
     // Save the contract instance
     this.setState({ 
@@ -79,21 +84,20 @@ export default class CeloScreen extends React.Component {
     this._isMounted = false
   }
 
-  
   getFaucetInfo = async () => {
     let faucetAddress = this.state.faucetContract._address
-    console.log(faucetAddress);
 
     let goldToken = await kit.contracts.getGoldToken()
     let stableToken = await kit.contracts.getStableToken()
 
-    let faucetcGLDBalance = await goldToken.balanceOf(faucetAddress);
-    let faucetcUSDBalance = await stableToken.balanceOf(faucetAddress);
+    let faucetcGLDBalance = await goldToken.balanceOf(faucetAddress)
+    let faucetcUSDBalance = await stableToken.balanceOf(faucetAddress)
 
     if (this._isMounted === true) {
       this.setState({
-      faucetcGLDBalance: faucetcGLDBalance.toString(),
-      faucetcUSDBalance: faucetcUSDBalance.toString()
+        faucetAddress: faucetAddress,
+        faucetcGLDBalance: faucetcGLDBalance.toString(),
+        faucetcUSDBalance: faucetcUSDBalance.toString()
     })
     }
 
@@ -138,7 +142,7 @@ export default class CeloScreen extends React.Component {
     const callback = Linking.makeUrl('/my/path')
 
     // convert user amount to wei in bignumber format
-    let amount = parseFloat(this.state.redeemAmount)
+    let amount = parseFloat(this.state.withdrawAmount)
     let weiAmount = BigNumber(amount*10e17)
 
     const txObject = await this.state.faucetContract.methods.withdraw(weiAmount, cUSD)
@@ -165,9 +169,12 @@ export default class CeloScreen extends React.Component {
     let result = await toTxResult(kit.web3.eth.sendSignedTransaction(tx)).waitReceipt()
 
     console.log(`Faucet contract update transaction receipt: `, result.transactionHash)  
+    Alert.alert("Transaction Complete!",
+    `Tx Hash: ${result.transactionHash}`
+    )
     this.getFaucetInfo()
     this.getUserBalance()
-    this.setState({ redeemAmount: "0" })
+    this.setState({ withdrawAmount: "0" })
   }
 
   getcGLD = async () => {
@@ -178,7 +185,7 @@ export default class CeloScreen extends React.Component {
     const callback = Linking.makeUrl('/my/path')
 
     // convert user amount to wei in bignumber format
-    let amount = parseFloat(this.state.redeemAmount)
+    let amount = parseFloat(this.state.withdrawAmount)
     let weiAmount = BigNumber(amount*10e17)
 
     const txObject = await this.state.faucetContract.methods.withdraw(weiAmount, Celo)
@@ -205,9 +212,12 @@ export default class CeloScreen extends React.Component {
     let result = await toTxResult(kit.web3.eth.sendSignedTransaction(tx)).waitReceipt()
 
     console.log(`Faucet contract update transaction receipt: `, result.transactionHash)  
+    Alert.alert("Transaction Complete!",
+      `Tx Hash: ${result.transactionHash}`
+    )
     this.getFaucetInfo()
     this.getUserBalance()
-    this.setState({ redeemAmount: "0" })
+    this.setState({ withdrawAmount: "0" })
   }
 
   //TODO: allow exchanges inside the app
@@ -250,19 +260,26 @@ export default class CeloScreen extends React.Component {
 
     // Get the stabel token contract
     const stableToken = await kit.contracts.getStableToken()
+    const goldToken = await kit.contracts.getGoldToken()
 
     // Get the user account balance (cUSD)
     const cUSDBalanceBig = await stableToken.balanceOf(kit.defaultAccount)
-    
+    const cGLDBalanceBig = await goldToken.balanceOf(kit.defaultAccount)
+
     // Convert from a big number to a string
     let cUSDBalance = cUSDBalanceBig.toString()
-    
+    let cGLDBalance = cGLDBalanceBig.toString()
+
+    this.getFaucetInfo()
+
     // Update state
-    this.setState({ cUSDBalance, 
-                    isLoadingBalance: false,
-                    address: dappkitResponse.address, 
-                    phoneNumber: dappkitResponse.phoneNumber,
-                  loggedIn: true })
+    this.setState({ 
+      cUSDBalance, cGLDBalance,
+      isLoadingBalance: false,
+      address: dappkitResponse.address, 
+      phoneNumber: dappkitResponse.phoneNumber,
+      loggedIn: true 
+    })
   }
 
   getUserBalance = async () => {
@@ -287,20 +304,34 @@ export default class CeloScreen extends React.Component {
   }
 
   onChangeNumber = async (number) => {
-    this.setState({ redeemAmount: number })
+
+    if (number <= this.state.redeemableAmount){
+      this.setState({ withdrawAmount: number })
+    } else {
+      Alert.alert(
+        "Insufficient Credit",
+        `There is only ${this.state.redeemableAmount} available to withdraw.`
+      )
+    }
+
   }
 
   render(){
-    let disabled = this.state.redeemAmount > 0 ? false : true
+    let { withdrawAmount, redeemableAmount } = this.state
+    let disabled = withdrawAmount > 0 ? false : true
+
+    //let redeemableAmount = useSelector((state) => state.AccountReducer.redeemableAmount)
+
     return (
       
       <View style={styles.container}>
         <Image resizeMode='contain' source={whiteWalletRings}></Image>
-        <Text>You must have Celo Wallet (alfajores network) installed!</Text>
+        
         {
           this.state.loggedIn === false ? (
             <>
-              <Text style={styles.title}>Login first</Text>
+            <Text>You must have Celo Wallet (alfajores network) installed!</Text>
+              <Text style={styles.title}>Login to Celo!!</Text>
               <Button title="login()" 
                 onPress={()=> this.login()} />
               <OpenURLButton url="https://celo.org/developers/wallet">
@@ -310,38 +341,37 @@ export default class CeloScreen extends React.Component {
           ) : (
             <ScrollView>
               <Text style={styles.title}>Account Info:</Text>
-              <Text>Current Account Address:</Text>
+              <Text>Your Account Address:</Text>
               <Text>{this.state.address}</Text>
               <Text>Phone number: {this.state.phoneNumber}</Text>
+              <Text>Celo Balance: {this.state.cGLDBalance}</Text>
               <Text>cUSD Balance: {this.state.cUSDBalance}</Text>
+              <Text>Redeemable Amount: {redeemableAmount}</Text>
 
-              <Text style={styles.title}>Faucet Balance:</Text>
-              <Button title="Get Faucet Info" 
-                onPress={()=> this.getFaucetInfo()} />
-              <Text>cGLD Balance: {this.state.faucetcGLDBalance}</Text>
-              <Text>cUSD Balance: {this.state.faucetcUSDBalance}</Text>
-
-              <TextInput style={styles.title}>Withdraw {this.state.redeemAmount} from Faucet</TextInput>
+              <Text style={styles.title}>Withdraw {this.state.withdrawAmount} from Faucet</Text>
+              <Text>You can redeem up to ${redeemableAmount}.</Text>
               <TextInput
                 style={styles.input}
                 onChangeText={this.onChangeNumber}
-                value={this.state.redeemAmount}
+                value={this.state.withdrawAmount}
                 placeholder="Amount to Withdraw"
                 keyboardType="numeric"
               />
 
-              <Button title="Get cGLD" 
-                onPress={()=> this.getcGLD()} 
-                disabled={disabled}  
-              />
               <Button title="Get cUSD" 
                 onPress={()=> this.getcUSD()} 
                 disabled={disabled} 
               />
-
-              <OpenURLButton url="https://app.ubeswap.org/#/swap">
-                Exchange cGLD for cUSD
+              <Text></Text>
+              <OpenURLButton url="https://app-alfajores.ubeswap.org/">
+                Exchange cUSD for Celo gold!
               </OpenURLButton>
+
+
+              <Text style={styles.title}>Green Deeds Faucet Balance:</Text>
+              <Text>Contract Address: {this.state.faucetAddress}</Text>
+              <Text>Celo Balance: {this.state.faucetcGLDBalance}</Text>
+              <Text>cUSD Balance: {this.state.faucetcUSDBalance}</Text>
 
               <Button title="Donate to Faucet" 
                 onPress={()=> this.donateToFaucet()} disabled />     

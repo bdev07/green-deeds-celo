@@ -1,14 +1,44 @@
-import React from "react";
-import { SafeAreaView, Button } from "react-native";
+import React from "react"
+import { SafeAreaView, Button, Text, View } from "react-native"
 
-const RecycleScreen = ({ navigation }) => {
-  const photo = () => navigation.navigate("Camera");
+export default class RecycleScreen extends React.Component {
+  state = {
+    recycled: 0,
+    redeemableAmount: "0.00"  //route.params !== undefined ? route.params.redeemableAmount : "0.00"
+  }
 
-  return (
-    <SafeAreaView>
-      <Button title="Take Photo" onPress={photo} />
-    </SafeAreaView>
-  );
-};
+  photo = () => this.props.navigation.navigate("Camera")
+  celo = () => this.props.navigation.navigate("Celo", { redeemableAmount: this.state.redeemableAmount });
+  
 
-export default RecycleScreen;
+  photoPressed = () => {
+    this.setState({
+      recycled: 3,
+      redeemableAmount: "3.00"
+    })
+
+  }
+
+
+
+  render() {
+    console.log(this.props)
+    return (
+      <SafeAreaView>
+        <Button title="Scan Receipt" onPress={this.photoPressed} />
+  
+            <View>
+              <Text>Bottles Recycled: {this.state.recycled}</Text>
+  
+              <Text>Redeemable Amount: ${this.state.redeemableAmount} </Text>
+              <Button title="Redeem for Celo Dollars" onPress={this.celo} />
+            </View>
+  
+  
+  
+      </SafeAreaView>
+    );
+  }
+
+}
+
