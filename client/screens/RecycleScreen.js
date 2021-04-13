@@ -24,15 +24,13 @@ export default class RecycleScreen extends React.Component {
       <SafeAreaView>
         <Button title="Scan Receipt" onPress={this.photoPressed} />
   
-            <View>
-              <Text>Bottles Recycled: {this.state.recycled}</Text>
-  
-              <Text>Redeemable Amount: ${this.state.redeemableAmount} </Text>
-              <Button title="Redeem for Celo Dollars" onPress={this.celo} />
-            </View>
-  
-  
-  
+          <View>
+            <Text>Bottles Recycled: {this.state.recycled}</Text>
+
+            <Text>Redeemable Amount: ${this.state.redeemableAmount} </Text>
+            <Button title="Redeem for Celo Dollars" onPress={this.celo} />
+          </View>
+
       </SafeAreaView>
     );
   }

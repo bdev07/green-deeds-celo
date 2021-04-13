@@ -10,12 +10,10 @@ const HomeScreen = ({ navigation }) => {
   const loggedIn = useSelector((state) => state.AccountReducer.loggedIn);
   const dispatch = useDispatch();
 
-  let redeemableAmount = "$3.00"
-
   const logout = () => dispatch(logoutAction());
-  const compost = () => navigation.navigate("Compost", { redeemableAmount: redeemableAmount });
-  const recycle = () => navigation.navigate("Recycle");//, { redeemableAmount: redeemableAmount });
-  const celo = () => navigation.navigate("Celo", { redeemableAmount: redeemableAmount });
+  const compost = () => navigation.navigate("Compost");
+  const recycle = () => navigation.navigate("Recycle");
+  const celo = () => navigation.navigate("Celo");
 
 
 
@@ -24,10 +22,9 @@ const HomeScreen = ({ navigation }) => {
       <View>
         <Button title="Compost" onPress={compost} />
         <Button title="Recycle" onPress={recycle} />
+        <Text></Text>
         <Button title="Celo"    onPress={celo} />
-
-        {/* <Text>Redeemable Amount: {redeemableAmount}</Text> */}
-
+        <Text></Text>
         <Button title="Logout"  onPress={logout} />
 
 
