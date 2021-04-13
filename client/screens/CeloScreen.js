@@ -40,15 +40,14 @@ export default class CeloScreen extends React.Component {
     phoneNumber: 'Not logged in',
     cUSDBalance: 'Not logged in',
     cGLDBalance: 'Not logged in',
-    contractName: '',
-    textInput: '',
     faucetContract: {},
     faucetAddress: '',
     faucetcUSDBalance: 'N/A',
     faucetcGLDBalance: 'N/A',
     exchangeRate: '',
-    redeemableAmount: this.props.route.params.redeemableAmount,
-    withdrawAmount: this.props.route.params.redeemableAmount,
+    donateAmount: '1',
+    redeemableAmount: this.props.route.params ? this.props.route.params.redeemableAmount : '0',
+    withdrawAmount: this.props.route.params ? this.props.route.params.redeemableAmount : '0',
     isLoadingBalance: false
   }
 
@@ -105,32 +104,42 @@ export default class CeloScreen extends React.Component {
   // end user sends funds to faucet
   donateToFaucet = async () => {
     console.log("donateToFaucet()")
-
-    let donatingAccount = this.state.address
-    let faucetAddress = this.state.faucetContract.options.address
+    const requestId = 'donate_celo'
+    const dappName = 'Green Deeds'
+    const callback = Linking.makeUrl('/my/path')
     
-    let amount = 10
-    let goldToken = await kit.contracts.getGoldToken()
-    let stableToken = await kit.contracts.getStableToken()
+    let amount = parseFloat(this.state.donateAmount)
+    let weiAmount = BigNumber(amount*10e17)
 
-    console.log("got tokens")
+    const txObject = await this.state.faucetContract.methods.donate()
 
-    let celotx = await goldToken.transfer(faucetAddress, amount).send({from: donatingAccount}).catch(err => console.log("celotx ERR: ", err))
-    let cUSDtx = await stableToken.transfer(faucetAddress, amount).send({from: donatingAccount, feeCurrency: stableToken.address}).catch(err => console.log("cUSDtx ERR: ", err))
+    requestTxSig(
+      kit,
+      [
+        {
+          from: this.state.address,
+          to: this.state.faucetContract.options.address,
+          tx: txObject,
+          value: weiAmount,
+          feeCurrency: FeeCurrency.cUSD
+        }
+      ],
+      { requestId, dappName, callback }
+    )
 
-    // TODO: Error unknown account
-    let celoReceipt = await celotx.waitReceipt().catch(err => console.log("celoReceipt ERR: ", err))
-    let cUSDReceipt = await cUSDtx.waitReceipt().catch(err => console.log("cusdReceipt ERR: ", err))
+    // Get the response from the Celo wallet
+    const dappkitResponse = await waitForSignedTxs(requestId)
+    const tx = dappkitResponse.rawTxs[0]
+    
+    // Get the transaction result, once it has been included in the Celo blockchain
+    let result = await toTxResult(kit.web3.eth.sendSignedTransaction(tx)).waitReceipt()
 
-    console.log('CELO Transaction receipt: %o', celoReceipt)
-    console.log('cUSD Transaction receipt: %o', cUSDReceipt)
+    console.log(`Faucet contract update transaction receipt: `, result.transactionHash) 
+    Alert.alert("Donation complete!", `Tx Hash: ${result.transactionHash}`)
 
-    let celoBalance = await goldtoken.balanceOf(donatingAccount)
-    let cUSDBalance = await stabletoken.balanceOf(donatingAccount)
-
-    console.log(`Your new account CELO balance: ${celoBalance.toString()}`)
-    console.log(`Your new account cUSD balance: ${cUSDBalance.toString()}`)
-
+    this.getFaucetInfo()
+    this.getUserBalance()
+    this.setState({ donateAmount: "0" })
   }
 
   getcUSD = async () => {
@@ -298,10 +307,6 @@ export default class CeloScreen extends React.Component {
 
   }
 
-  onChangeText = async (text) => {
-    this.setState({textInput: text})
-  }
-
   onChangeNumber = async (number) => {
 
     if (number <= this.state.redeemableAmount){
@@ -313,6 +318,10 @@ export default class CeloScreen extends React.Component {
       )
     }
 
+  }
+
+  onChangeDonate = async (number) => {
+    this.setState({ donateAmount: number })
   }
 
   render(){
@@ -372,8 +381,16 @@ export default class CeloScreen extends React.Component {
               <Text>Celo Balance: {this.state.faucetcGLDBalance}</Text>
               <Text>cUSD Balance: {this.state.faucetcUSDBalance}</Text>
 
+              <TextInput
+                style={styles.input}
+                onChangeText={this.onChangeDonate}
+                value={this.state.donateAmount}
+                placeholder="Amount to Donate"
+                keyboardType="numeric"
+              />
+
               <Button title="Donate to Faucet" 
-                onPress={()=> this.donateToFaucet()} disabled />     
+                onPress={()=> this.donateToFaucet()} />     
             </ScrollView>
           )
         }
