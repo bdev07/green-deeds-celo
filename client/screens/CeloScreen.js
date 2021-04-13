@@ -307,7 +307,7 @@ export default class CeloScreen extends React.Component {
 
   }
 
-  onChangeNumber = async (number) => {
+  onChangeWithdraw = async (number) => {
 
     if (number <= this.state.redeemableAmount){
       this.setState({ withdrawAmount: number })
@@ -317,7 +317,6 @@ export default class CeloScreen extends React.Component {
         `There is only ${this.state.redeemableAmount} available to withdraw.`
       )
     }
-
   }
 
   onChangeDonate = async (number) => {
@@ -327,8 +326,6 @@ export default class CeloScreen extends React.Component {
   render(){
     let { withdrawAmount, redeemableAmount } = this.state
     let disabled = withdrawAmount > 0 ? false : true
-
-    //let redeemableAmount = useSelector((state) => state.AccountReducer.redeemableAmount)
 
     return (
       
@@ -340,8 +337,10 @@ export default class CeloScreen extends React.Component {
             <>
             <Text>You must have Celo Wallet (alfajores network) installed!</Text>
               <Text style={styles.title}>Login to Celo!!</Text>
-              <Button title="login()" 
+              <Button title="Login" 
                 onPress={()=> this.login()} />
+              <Text></Text>
+              <Text>Please download the Celo Wallet to continue.</Text>
               <OpenURLButton url="https://celo.org/developers/wallet">
                 Download Wallet
               </OpenURLButton>
@@ -360,7 +359,7 @@ export default class CeloScreen extends React.Component {
               <Text>You can redeem up to ${redeemableAmount}.</Text>
               <TextInput
                 style={styles.input}
-                onChangeText={this.onChangeNumber}
+                onChangeText={this.onChangeWithdraw}
                 value={this.state.withdrawAmount}
                 placeholder="Amount to Withdraw"
                 keyboardType="numeric"
@@ -389,7 +388,7 @@ export default class CeloScreen extends React.Component {
                 keyboardType="numeric"
               />
 
-              <Button title="Donate to Faucet" 
+              <Button title="Donate Celo to Faucet" 
                 onPress={()=> this.donateToFaucet()} />     
             </ScrollView>
           )
