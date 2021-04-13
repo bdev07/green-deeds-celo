@@ -1,11 +1,16 @@
 # Green Deeds Celo Hackathon Submission:
 
+Link to our full presentation: 
+
+Link to our video demo(s): 
+- [Recycling and Ubeswap](https://youtu.be/ja_fWc7RCmk)
+
+
 This app has been tested on the [Alfajores test network](https://docs.celo.org/getting-started/alfajores-testnet).
 
-For a complete presentation and demo of Green Deeds, please go [here]().
 
 ## What does DeFi look like when it's designed for mobile-first?
-This question is also answered in the presentation found [here]().
+This question is also answered in the presentation found [here].
 
 Mobile first decentralized finance makes the blockchain more user friendly.  This makes it easier to incentivize users to utilize a blockchain ledger.  Green Deeds hopes to take advantage of the ease of mobile-first to help incentivize businesses and individuals to recycle and recycle correctly.  
 
@@ -16,7 +21,7 @@ We hope to minimize the need for raw materials by keeping existing assets in the
 
 Investors or any business that uses recyclable materials like compost or empty bottles can donate to the Green Deeds funds.  Those funds then go to businesses or individuals who have done a greed deed by recycling or composting. 
 
-Our [demo]() shows a proof of concept for an end user wishing to recycle 3 bottles and redeem their rewards for celo dollars.  Those dollars can then be exchanged for celo gold using Ubeswap. 
+Our [demo](https://youtu.be/ja_fWc7RCmk) shows a proof of concept for an end user wishing to recycle 3 bottles and redeem their rewards for celo dollars.  Those dollars can then be exchanged for celo gold using Ubeswap. 
 
 #
 
