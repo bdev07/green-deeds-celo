@@ -27,9 +27,6 @@ const Celo = "0xF194afDf50B03e69Bd7D057c1Aa9e10c9954E4C9";
 const cUSD = "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1";
 
 
-/**
- * TEMPORARY.  IDEALLY this is a component to be used in other screens.
- */
 export default class CeloScreen extends React.Component {
   _isMounted = false
 
